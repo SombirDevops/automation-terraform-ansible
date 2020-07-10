@@ -24,9 +24,9 @@ variable "source_network_ranges" {
 }
 variable "ssh_pub_key_path" {
   type = string
-  default = "/root/.ssh/id_rsa.pub"
+  default = "~/.ssh/id_rsa.pub"
 }
 variable "ssh_prv_key_path" {
   type = string
-  default = "/root/.ssh/id_rsa"
+  default = "~/.ssh/id_rsa"
 }
