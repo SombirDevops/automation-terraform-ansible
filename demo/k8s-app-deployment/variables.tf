@@ -1,7 +1,3 @@
-variable "project_name" {
-  type = string
-  default = "inspiring-team-177714"
-}
 variable "region" {
   type = string
   default = "us-central1"

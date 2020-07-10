@@ -1,7 +1,3 @@
-variable "project_name" {
-  type = string
-  default = "evident-syntax-282809"
-}
 variable "region" {
   type = string
   default = "us-central1"
@@ -24,7 +20,7 @@ variable "ssh_username" {
 }
 variable "source_network_ranges" {
   type = list
-  default = ["104.56.114.248/32", "198.144.216.128/32", "103.129.121.173/32", "192.195.81.38/32", "115.98.15.46/32"]
+  default = ["0.0.0.0/0"]
 }
 variable "ssh_pub_key_path" {
   type = string
