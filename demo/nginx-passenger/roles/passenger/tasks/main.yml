@@ -96,3 +96,9 @@
     state: absent
   when: nginx_remove_default_vhost
   notify: restart nginx
+
+- name: Wait for nginx VM strart receiving traffic
+  wait_for:
+    host: "{{ passenger_server_name }}"
+    port: 80
+    delay: 10

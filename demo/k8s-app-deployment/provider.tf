@@ -1,5 +1,5 @@
 provider "google" {
- credentials = file("/opt/credential_demo.json")
- project     = "evident-syntax-282809"
- region      = "us-west1"
+ credentials = file("CREDENTIAL_JSON_FILE")
+ project     = "PROJECT_ID"
+ region      = "REGION"
 }
