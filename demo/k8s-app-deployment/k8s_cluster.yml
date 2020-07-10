@@ -1,0 +1,7 @@
+- name: Install k8s master
+  hosts: all
+  gather_facts: false
+  become: yes
+
+  roles:
+    - k8s-cluster

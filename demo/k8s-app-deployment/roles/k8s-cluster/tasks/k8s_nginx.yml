@@ -1,0 +1,34 @@
+---
+- name: Copy kubernetes manifests
+  copy:
+    src: "{{ item }}"
+    dest: /home/ubuntu/
+  with_items:
+    - nginx-deployment.yml
+    - nginx-service.yml
+    - nginx-ingress.yml
+  delegate_to: "{{ k8s_master_ip }}"
+
+- name: Create ingress for nginx passenger
+  k8s:
+    state: present
+    src: /home/ubuntu/nginx-ingress.yml
+  delegate_to: "{{ k8s_master_ip }}"
+
+- name: Create service for nginx passenger
+  k8s:
+    state: present
+    src: /home/ubuntu/nginx-service.yml
+  delegate_to: "{{ k8s_master_ip }}"
+
+- name: Create deployment for nginx passenger
+  k8s:
+    state: present
+    src: /home/ubuntu/nginx-deployment.yml
+  delegate_to: "{{ k8s_master_ip }}"
+
+- name: Wait for nginx deployment start recieving traffic
+  wait_for:
+    host: "{{ k8s_worker_ip }}"
+    port: 80
+    delay: 10

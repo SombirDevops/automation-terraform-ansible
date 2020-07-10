@@ -1,0 +1,60 @@
+---
+
+- name: Apt update
+  apt:
+    update_cache: yes
+  delegate_to: "{{ k8s_master_ip }}"
+
+- name: Install pip3
+  apt:
+    name: python3-pip
+    state: present
+  delegate_to: "{{ k8s_master_ip }}"
+ 
+- name: Install k8s pip modules
+  command: pip3 install "{{ item }}"
+  with_items:
+    - openshift
+  delegate_to: "{{ k8s_master_ip }}"
+
+- name: Install kubernetes cluster using snap
+  snap:
+    name: microk8s
+    classic: yes
+  delegate_to: "{{ k8s_master_ip }}"
+
+- name: Wait for k8s master to fully initialize
+  wait_for:
+    timeout: 20
+  delegate_to: "{{ k8s_master_ip }}"
+
+- name: Enable k8s add-ons
+  command: "microk8s.enable dns dashboard istio ingress"
+  async: 150
+  poll: 10
+  delegate_to: "{{ k8s_master_ip }}"
+
+- name: Get join command
+  shell: microk8s.add-node | head -1 | awk -F ":" '{print $3}'
+  register: K8S_MASTER_KEY
+  delegate_to: "{{ k8s_master_ip }}"
+
+- debug:
+    var: K8S_MASTER_KEY
+  delegate_to: "{{ k8s_master_ip }}"
+
+- name: Register dummy host with variable
+  add_host:
+    name: "DUMMY_HOST"
+    K8S_MASTER_KEY_NEW: "{{ K8S_MASTER_KEY.stdout }}"
+  delegate_to: "{{ k8s_master_ip }}"
+
+- name: Create .kube directory
+  file:
+    path: /root/.kube
+    state: directory
+  delegate_to: "{{ k8s_master_ip }}"
+
+- name: Set kubeconfig path
+  shell: "touch /root/.kube/config && microk8s config > /root/.kube/config"
+  delegate_to: "{{ k8s_master_ip }}"

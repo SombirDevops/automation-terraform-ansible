@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-passenger-deployment
+  namespace: default
+  labels:
+    app: nginx-passenger
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-passenger
+  template:
+    metadata:
+      labels:
+        app: nginx-passenger
+    spec:
+      containers:
+      - name: nginx-passenger
+        image: avinasht/nginx_passenger_test:latest
+        ports:
+        - containerPort: 80

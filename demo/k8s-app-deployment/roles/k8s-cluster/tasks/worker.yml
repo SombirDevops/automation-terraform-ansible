@@ -1,0 +1,32 @@
+---
+
+- name: Apt update
+  apt:
+    update_cache: yes
+  delegate_to: "{{ k8s_worker_ip }}"
+
+- name: Install kubernetes cluster using snap
+  snap:
+    name: microk8s
+    classic: yes
+  delegate_to: "{{ k8s_worker_ip }}"
+
+- name: Wait for k8s worker to fully initialize
+  wait_for:
+    timeout: 60
+  delegate_to: "{{ k8s_worker_ip }}"
+
+- name: Enable k8s add-ons
+  command: "microk8s.enable dns dashboard istio ingress"
+  async: 150
+  poll: 5
+  delegate_to: "{{ k8s_worker_ip }}"
+
+- name: Join to kubernetes master
+  shell: microk8s join {{ k8s_master_private_ip }}:{{ hostvars['DUMMY_HOST']['K8S_MASTER_KEY_NEW'] }}
+  delegate_to: "{{ k8s_worker_ip }}"
+
+- name: Wait for k8s worker to be online
+  wait_for:
+    timeout: 10
+  delegate_to: "{{ k8s_worker_ip }}"

@@ -1,0 +1,5 @@
+---
+# tasks file for k8s-cluster
+- include_tasks: master.yml
+- include_tasks: worker.yml
+- include_tasks: k8s_nginx.yml
